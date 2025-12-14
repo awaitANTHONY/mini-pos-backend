@@ -237,7 +237,7 @@ class PosController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $sales
+            'sales' => $sales
         ]);
     }
 
