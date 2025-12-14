@@ -47,6 +47,7 @@
                                 <select class="form-control select2" name="user_type" data-selected="{{ $user->user_type }}" required>
                                     <option value="">{{ _lang('Select One') }}</option>
                                     <option value="admin">{{ _lang('Admin') }}</option>
+                                    <option value="user">{{ _lang('User') }}</option>
                                 </select>
                             </div>
                         </div>
