@@ -220,7 +220,7 @@ class PosController extends Controller
      */
     public function salesList(Request $request)
     {
-        $query = Sale::with(['user', 'items.item', 'items.variant', 'payments'])
+        $query = Sale::with(['items.item', 'items.variant', 'payments'])
             ->orderBy('created_at', 'desc');
 
         // Filter by date range if provided
