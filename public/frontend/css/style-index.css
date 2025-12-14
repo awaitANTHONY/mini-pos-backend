@@ -1,0 +1,53 @@
+.ib-star-rating-block {
+  display: flex;
+  align-items: center;
+}
+.ib-star-rating-block .ib-star-rating--icon {
+  font-size: 0;
+}
+.ib-star-rating-block .ib-star-rating--icon svg {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+}
+
+
+/********************************************************
+
+Blog Page Css
+
+*********************************************************/
+.blog-figure{
+  margin-top: 0px;
+}
+.blog-card-date-author{
+    font-size: 12px;
+    font-style: normal;
+    color: #737373;
+    margin-bottom: 10px !important;
+}
+
+.blog-cart-link{
+  text-decoration: none;
+}
+
+.blog-cart-title{
+  margin-top: 1px;
+    margin-bottom: 5px;
+    font-size: 18px;
+    font-weight: 600;
+    font-style: normal;
+    text-decoration: none;
+}
+.blog-cart-description{
+    margin-top: 1px;
+    margin-bottom: 2px;
+    font-size: var(--global-kb-font-size-sm, 0.9rem);
+    font-style: normal;
+    color: #737373;
+}
+
+.blog-cart-link{
+  text-decoration: none;
+}
+
