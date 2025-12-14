@@ -234,7 +234,7 @@ class SyncController extends Controller
                         'expenses_failed' => count($syncResults['expenses']['failed']),
                     ]
                 ]
-            ], 201);
+            ], 200);
 
         } catch (\Exception $e) {
             DB::rollBack();
