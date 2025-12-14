@@ -351,6 +351,22 @@ class SaleService
             // Update sale totals
             $sale->total_amount = $totalAmount;
             $sale->total_cost = $totalCost;
+
+            // Handle new payments if provided
+            if (!empty($data['payments'])) {
+                // Delete old payments
+                Payment::where('sale_id', $sale->id)->delete();
+                
+                // Add new payments
+                $paidAmount = 0;
+                foreach ($data['payments'] as $paymentData) {
+                    $payment = $this->createPayment($sale->id, $paymentData);
+                    $paidAmount += $payment->amount;
+                }
+                
+                $sale->paid_amount = $paidAmount;
+            }
+
             $sale->due_amount = $totalAmount - $sale->paid_amount;
 
             // Update payment status
