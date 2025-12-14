@@ -1,0 +1,552 @@
+{
+    "info": {
+        "_postman_id": "sync-api-collection",
+        "name": "POS System - Sync API",
+        "description": "Complete sync endpoints for offline-first mobile app",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Download Data (Initial Sync)",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/v1/sync/download?last_sync_at=2025-12-14T10:00:00Z",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "sync",
+                        "download"
+                    ],
+                    "query": [
+                        {
+                            "key": "last_sync_at",
+                            "value": "2025-12-14T10:00:00Z",
+                            "description": "Optional - Last sync timestamp"
+                        }
+                    ]
+                },
+                "description": "Download all categories and items for offline mode. Returns all active categories and items with variants."
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/download",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "download"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"data\": {\n        \"categories\": [\n            {\n                \"id\": 1,\n                \"title\": \"Momo\",\n                \"description\": null,\n                \"image\": \"http://domain.com/uploads/momo.jpg\",\n                \"status\": 1,\n                \"updated_at\": \"2025-12-14T10:00:00.000000Z\"\n            }\n        ],\n        \"items\": [\n            {\n                \"id\": 5,\n                \"name\": \"Chicken Fried Momo\",\n                \"image_url\": \"http://domain.com/uploads/items/chicken-fried.jpg\",\n                \"category_id\": 1,\n                \"category\": {\n                    \"id\": 1,\n                    \"title\": \"Momo\"\n                },\n                \"ingredient_id\": 1,\n                \"ingredient\": {\n                    \"id\": 1,\n                    \"name\": \"Chicken\",\n                    \"unit\": \"kg\"\n                },\n                \"ingredient_quantity\": 0.5,\n                \"had_variants\": true,\n                \"price\": null,\n                \"cost\": 80.00,\n                \"status\": 1,\n                \"variants\": [\n                    {\n                        \"id\": 1,\n                        \"name\": \"Small (4pcs)\",\n                        \"price\": \"140.00\",\n                        \"cost\": \"80.00\",\n                        \"ingredient_quantity\": 0.5,\n                        \"is_default\": true\n                    },\n                    {\n                        \"id\": 2,\n                        \"name\": \"Large (8pcs)\",\n                        \"price\": \"250.00\",\n                        \"cost\": \"150.00\",\n                        \"ingredient_quantity\": 1.0,\n                        \"is_default\": false\n                    }\n                ],\n                \"updated_at\": \"2025-12-14T10:00:00.000000Z\"\n            }\n        ],\n        \"synced_at\": \"2025-12-15T08:30:00.000000Z\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "2. Upload Offline Data (Batch Sync)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"sales\": [\n        {\n            \"temp_id\": \"sale-1702567890123\",\n            \"items\": [\n                {\n                    \"item_id\": 5,\n                    \"variant_id\": 1,\n                    \"quantity\": 2,\n                    \"unit_price\": 140.00,\n                    \"total_price\": 280.00\n                },\n                {\n                    \"item_id\": 8,\n                    \"variant_id\": null,\n                    \"quantity\": 1,\n                    \"unit_price\": 50.00,\n                    \"total_price\": 50.00\n                }\n            ],\n            \"payment_amount\": 330.00,\n            \"payment_method\": \"cash\",\n            \"note\": \"Table 3\",\n            \"created_at_offline\": \"2025-12-14T10:30:00Z\"\n        },\n        {\n            \"temp_id\": \"sale-1702567891234\",\n            \"items\": [\n                {\n                    \"item_id\": 12,\n                    \"variant_id\": 5,\n                    \"quantity\": 3,\n                    \"unit_price\": 250.00,\n                    \"total_price\": 750.00\n                }\n            ],\n            \"payment_amount\": 750.00,\n            \"payment_method\": \"card\",\n            \"note\": \"Takeaway\",\n            \"created_at_offline\": \"2025-12-14T11:15:00Z\"\n        }\n    ],\n    \"expenses\": [\n        {\n            \"temp_id\": \"expense-1702567890456\",\n            \"expense_date\": \"2025-12-14\",\n            \"total_amount\": 5000.00,\n            \"due_amount\": 0,\n            \"ingredient_id\": 1,\n            \"quantity\": 100,\n            \"unit_price\": 50.00,\n            \"supplier_name\": \"ABC Supplier\",\n            \"supplier_contact\": \"9876543210\",\n            \"description\": \"Chicken meat purchase\",\n            \"note\": \"Paid in full\",\n            \"created_at_offline\": \"2025-12-14T09:30:00Z\"\n        }\n    ]\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/v1/sync/upload",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "sync",
+                        "upload"
+                    ]
+                },
+                "description": "Batch upload offline sales and expenses. Server creates records and returns server IDs for each temp_id."
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"sales\": [\n        {\n            \"temp_id\": \"sale-1702567890123\",\n            \"items\": [\n                {\n                    \"item_id\": 5,\n                    \"variant_id\": 1,\n                    \"quantity\": 2,\n                    \"unit_price\": 140.00,\n                    \"total_price\": 280.00\n                }\n            ],\n            \"payment_amount\": 280.00,\n            \"payment_method\": \"cash\",\n            \"created_at_offline\": \"2025-12-14T10:30:00Z\"\n        }\n    ],\n    \"expenses\": [\n        {\n            \"temp_id\": \"expense-1702567890456\",\n            \"expense_date\": \"2025-12-14\",\n            \"total_amount\": 5000.00,\n            \"created_at_offline\": \"2025-12-14T09:30:00Z\"\n        }\n    ]\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/upload",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "upload"
+                            ]
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"message\": \"Sync completed\",\n    \"data\": {\n        \"results\": {\n            \"sales\": {\n                \"success\": [\n                    {\n                        \"temp_id\": \"sale-1702567890123\",\n                        \"server_id\": 15,\n                        \"invoice_no\": \"INV-000015\"\n                    },\n                    {\n                        \"temp_id\": \"sale-1702567891234\",\n                        \"server_id\": 16,\n                        \"invoice_no\": \"INV-000016\"\n                    }\n                ],\n                \"failed\": []\n            },\n            \"expenses\": {\n                \"success\": [\n                    {\n                        \"temp_id\": \"expense-1702567890456\",\n                        \"server_id\": 8\n                    }\n                ],\n                \"failed\": []\n            }\n        },\n        \"synced_at\": \"2025-12-15T08:35:00.000000Z\",\n        \"summary\": {\n            \"sales_synced\": 2,\n            \"sales_failed\": 0,\n            \"expenses_synced\": 1,\n            \"expenses_failed\": 0\n        }\n    }\n}"
+                },
+                {
+                    "name": "Partial Failure Response",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/upload",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "upload"
+                            ]
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"message\": \"Sync completed\",\n    \"data\": {\n        \"results\": {\n            \"sales\": {\n                \"success\": [\n                    {\n                        \"temp_id\": \"sale-1702567890123\",\n                        \"server_id\": 15,\n                        \"invoice_no\": \"INV-000015\"\n                    }\n                ],\n                \"failed\": [\n                    {\n                        \"temp_id\": \"sale-1702567891234\",\n                        \"error\": \"Insufficient stock for item ID 12\"\n                    }\n                ]\n            },\n            \"expenses\": {\n                \"success\": [\n                    {\n                        \"temp_id\": \"expense-1702567890456\",\n                        \"server_id\": 8\n                    }\n                ],\n                \"failed\": []\n            }\n        },\n        \"synced_at\": \"2025-12-15T08:35:00.000000Z\",\n        \"summary\": {\n            \"sales_synced\": 1,\n            \"sales_failed\": 1,\n            \"expenses_synced\": 1,\n            \"expenses_failed\": 0\n        }\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "3. Check Sync Status",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/v1/sync/status?last_sync_at=2025-12-14T10:00:00Z",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "sync",
+                        "status"
+                    ],
+                    "query": [
+                        {
+                            "key": "last_sync_at",
+                            "value": "2025-12-14T10:00:00Z",
+                            "description": "Last sync timestamp from local storage"
+                        }
+                    ]
+                },
+                "description": "Check if categories or items have been updated since last sync. Use this to determine if full sync is needed."
+            },
+            "response": [
+                {
+                    "name": "Updates Available",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/status?last_sync_at=2025-12-14T10:00:00Z",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "status"
+                            ],
+                            "query": [
+                                {
+                                    "key": "last_sync_at",
+                                    "value": "2025-12-14T10:00:00Z"
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"data\": {\n        \"requires_sync\": true,\n        \"categories_updated\": false,\n        \"items_updated\": true,\n        \"checked_at\": \"2025-12-15T08:30:00.000000Z\"\n    }\n}"
+                },
+                {
+                    "name": "No Updates",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/status?last_sync_at=2025-12-15T08:00:00Z",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "status"
+                            ],
+                            "query": [
+                                {
+                                    "key": "last_sync_at",
+                                    "value": "2025-12-15T08:00:00Z"
+                                }
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"data\": {\n        \"requires_sync\": false,\n        \"categories_updated\": false,\n        \"items_updated\": false,\n        \"checked_at\": \"2025-12-15T08:30:00.000000Z\"\n    }\n}"
+                },
+                {
+                    "name": "First Sync Required",
+                    "originalRequest": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "status"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"data\": {\n        \"requires_full_sync\": true,\n        \"message\": \"First sync required\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "4. Update Offline Sale",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"server_id\": 15,\n    \"items\": [\n        {\n            \"item_id\": 5,\n            \"variant_id\": 1,\n            \"quantity\": 3,\n            \"unit_price\": 140.00,\n            \"total_price\": 420.00\n        },\n        {\n            \"item_id\": 8,\n            \"variant_id\": null,\n            \"quantity\": 2,\n            \"unit_price\": 50.00,\n            \"total_price\": 100.00\n        }\n    ],\n    \"note\": \"Table 3 - Updated order\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/v1/sync/sales/:temp_id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "sync",
+                        "sales",
+                        ":temp_id"
+                    ],
+                    "variable": [
+                        {
+                            "key": "temp_id",
+                            "value": "sale-1702567890123",
+                            "description": "Client-generated temp_id"
+                        }
+                    ]
+                },
+                "description": "Update an offline sale that has been synced. Only allowed within configurable time limit (default 24 hours)."
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"server_id\": 15,\n    \"items\": [\n        {\n            \"item_id\": 5,\n            \"variant_id\": 1,\n            \"quantity\": 3,\n            \"unit_price\": 140.00,\n            \"total_price\": 420.00\n        }\n    ],\n    \"note\": \"Updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/sales/sale-1702567890123",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "sales",
+                                "sale-1702567890123"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"message\": \"Sale updated successfully\",\n    \"data\": {\n        \"temp_id\": \"sale-1702567890123\",\n        \"server_id\": 15,\n        \"invoice_no\": \"INV-000015\"\n    }\n}"
+                },
+                {
+                    "name": "Time Limit Exceeded",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/sales/sale-1702567890123",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "sales",
+                                "sale-1702567890123"
+                            ]
+                        }
+                    },
+                    "status": "Forbidden",
+                    "code": 403,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": false,\n    \"message\": \"Cannot edit sale after 24 hours\"\n}"
+                }
+            ]
+        },
+        {
+            "name": "5. Update Offline Expense",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{access_token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"server_id\": 8,\n    \"expense_date\": \"2025-12-14\",\n    \"total_amount\": 5500.00,\n    \"ingredient_id\": 1,\n    \"quantity\": 110,\n    \"unit_price\": 50.00,\n    \"supplier_name\": \"ABC Supplier\",\n    \"supplier_contact\": \"9876543210\",\n    \"description\": \"Chicken meat purchase - Updated quantity\",\n    \"note\": \"Paid in full\"\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/v1/sync/expenses/:temp_id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "v1",
+                        "sync",
+                        "expenses",
+                        ":temp_id"
+                    ],
+                    "variable": [
+                        {
+                            "key": "temp_id",
+                            "value": "expense-1702567890456",
+                            "description": "Client-generated temp_id"
+                        }
+                    ]
+                },
+                "description": "Update an offline expense that has been synced. Only allowed within configurable time limit (default 24 hours)."
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"server_id\": 8,\n    \"expense_date\": \"2025-12-14\",\n    \"total_amount\": 5500.00,\n    \"description\": \"Updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/expenses/expense-1702567890456",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "expenses",
+                                "expense-1702567890456"
+                            ]
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": true,\n    \"message\": \"Expense updated successfully\",\n    \"data\": {\n        \"temp_id\": \"expense-1702567890456\",\n        \"server_id\": 8\n    }\n}"
+                },
+                {
+                    "name": "Time Limit Exceeded",
+                    "originalRequest": {
+                        "method": "PUT",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/sync/expenses/expense-1702567890456",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "sync",
+                                "expenses",
+                                "expense-1702567890456"
+                            ]
+                        }
+                    },
+                    "status": "Forbidden",
+                    "code": 403,
+                    "_postman_previewlanguage": "json",
+                    "header": [],
+                    "cookie": [],
+                    "body": "{\n    \"success\": false,\n    \"message\": \"Cannot edit expense after 24 hours\"\n}"
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "access_token",
+            "value": "YOUR_ACCESS_TOKEN_HERE",
+            "type": "string"
+        }
+    ]
+}

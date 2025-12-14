@@ -153,10 +153,19 @@ class SyncController extends Controller
             if ($request->has('sales')) {
                 foreach ($request->sales as $saleData) {
                     try {
+                        // Convert payment_amount to payments array format
+                        $payments = [];
+                        if (!empty($saleData['payment_amount']) && $saleData['payment_amount'] > 0) {
+                            $payments[] = [
+                                'amount' => $saleData['payment_amount'],
+                                'method' => $saleData['payment_method'] ?? 'cash',
+                                'paid_at' => $saleData['created_at_offline'] ?? now(),
+                            ];
+                        }
+
                         $sale = $this->saleService->createSale([
                             'items' => $saleData['items'],
-                            'payment_amount' => $saleData['payment_amount'] ?? 0,
-                            'payment_method' => $saleData['payment_method'] ?? 'cash',
+                            'payments' => $payments,
                             'note' => $saleData['note'] ?? null,
                         ], auth()->id());
 

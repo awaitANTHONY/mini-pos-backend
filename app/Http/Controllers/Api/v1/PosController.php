@@ -267,10 +267,19 @@ class PosController extends Controller
         }
 
         try {
+            // Convert payment_amount and payment_method to payments array format
+            $payments = [];
+            if ($request->has('payment_amount') && $request->payment_amount > 0) {
+                $payments[] = [
+                    'amount' => $request->payment_amount,
+                    'method' => $request->get('payment_method', 'cash'),
+                    'paid_at' => now(),
+                ];
+            }
+
             $saleData = [
                 'items' => $request->items,
-                'payment_amount' => $request->get('payment_amount', 0),
-                'payment_method' => $request->get('payment_method', 'cash'),
+                'payments' => $payments,
                 'note' => $request->note,
             ];
 
