@@ -19,6 +19,10 @@ Route::group(['middleware' => ['x_check'], 'prefix' => 'v1'], function ()
 {
     //Api Controller
     Route::get('settings', [Controllers\Api\v1\ApiController::class, 'settings']);
+    // Categories
+    Route::get('categories', [Controllers\Api\v1\PosController::class, 'categoriesList']);
+    // Items
+    Route::get('items', [Controllers\Api\v1\PosController::class, 'itemsList']);
 
     Route::post('signin', [Controllers\Api\v1\AuthController::class, 'signin']);
 
@@ -36,16 +40,14 @@ Route::group(['middleware' => ['x_check'], 'prefix' => 'v1'], function ()
             Route::post('expenses', [Controllers\Api\v1\PosController::class, 'expenseCreate']);
             Route::put('expenses/{id}', [Controllers\Api\v1\PosController::class, 'expenseEdit']);
 
-            // Categories
-            Route::get('categories', [Controllers\Api\v1\PosController::class, 'categoriesList']);
+            
 
             // Sales
             Route::get('sales', [Controllers\Api\v1\PosController::class, 'salesList']);
             Route::post('sales', [Controllers\Api\v1\PosController::class, 'saleCreate']);
             Route::put('sales/{id}', [Controllers\Api\v1\PosController::class, 'saleEdit']);
 
-            // Items
-            Route::get('items', [Controllers\Api\v1\PosController::class, 'itemsList']);
+           
         });
 
         // Sync API Routes (for offline support)
