@@ -254,7 +254,7 @@ class PosController extends Controller
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.total_price' => 'required|numeric|min:0',
             'payment_amount' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|string|in:cash,card,mobile',
+            'payment_method' => 'nullable|string|in:cash,online',
             'note' => 'nullable|string',
         ]);
 
@@ -333,6 +333,8 @@ class PosController extends Controller
             'items.*.quantity' => 'required|numeric|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.total_price' => 'required|numeric|min:0',
+            'payment_amount' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string|in:cash,online',
             'note' => 'nullable|string',
         ]);
 
@@ -345,8 +347,19 @@ class PosController extends Controller
         }
 
         try {
+            // Convert payment_amount and payment_method to payments array format if provided
+            $payments = [];
+            if ($request->has('payment_amount') && $request->payment_amount > 0) {
+                $payments[] = [
+                    'amount' => $request->payment_amount,
+                    'method' => $request->get('payment_method', 'cash'),
+                    'paid_at' => now(),
+                ];
+            }
+
             $saleData = [
                 'items' => $request->items,
+                'payments' => $payments,
                 'note' => $request->note,
             ];
 

@@ -109,7 +109,7 @@ class SyncController extends Controller
             'sales.*.items.*.unit_price' => 'required|numeric|min:0',
             'sales.*.items.*.total_price' => 'required|numeric|min:0',
             'sales.*.payment_amount' => 'nullable|numeric|min:0',
-            'sales.*.payment_method' => 'nullable|string|in:cash,card,mobile',
+            'sales.*.payment_method' => 'nullable|string|in:cash,online',
             'sales.*.note' => 'nullable|string',
             'sales.*.created_at_offline' => 'required|date',
 
