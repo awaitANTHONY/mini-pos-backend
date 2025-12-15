@@ -25,7 +25,7 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-        $expenses = Expense::with(['ingredient', 'creator'])->orderBy('expense_date', 'DESC');
+        $expenses = Expense::with(['ingredient', 'creator'])->orderBy('id', 'DESC');
 
         if ($request->ajax()) {
             return DataTables::of($expenses)

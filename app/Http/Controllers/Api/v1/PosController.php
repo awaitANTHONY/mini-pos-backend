@@ -18,10 +18,12 @@ use Carbon\Carbon;
 class PosController extends Controller
 {
     protected $saleService;
+    protected $stockService;
 
-    public function __construct(SaleService $saleService)
+    public function __construct(SaleService $saleService, \App\Services\StockService $stockService)
     {
         $this->saleService = $saleService;
+        $this->stockService = $stockService;
     }
 
     // ==================== EXPENSES ====================
@@ -93,6 +95,8 @@ class PosController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
             $expense = Expense::create([
                 'expense_date' => $request->expense_date,
                 'total_amount' => $request->total_amount,
@@ -107,12 +111,20 @@ class PosController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
+            // If ingredient purchase, increase stock
+            if ($request->ingredient_id && $request->quantity > 0) {
+                $this->stockService->addStock($request->ingredient_id, $request->quantity);
+            }
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Expense created successfully',
                 'data' => $expense->load(['ingredient', 'creator'])
             ], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create expense',
@@ -169,6 +181,12 @@ class PosController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
+            // Store old values for stock adjustment
+            $oldIngredientId = $expense->ingredient_id;
+            $oldQuantity = $expense->quantity;
+
             $expense->update([
                 'expense_date' => $request->expense_date,
                 'total_amount' => $request->total_amount,
@@ -182,12 +200,26 @@ class PosController extends Controller
                 'note' => $request->note,
             ]);
 
+            // Adjust stock if ingredient or quantity changed
+            if ($oldIngredientId && $oldQuantity > 0) {
+                // Reduce old ingredient stock
+                $this->stockService->reduceStock($oldIngredientId, $oldQuantity, true);
+            }
+
+            if ($request->ingredient_id && $request->quantity > 0) {
+                // Add new ingredient stock
+                $this->stockService->addStock($request->ingredient_id, $request->quantity);
+            }
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Expense updated successfully',
                 'data' => $expense->load(['ingredient', 'creator'])
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update expense',
