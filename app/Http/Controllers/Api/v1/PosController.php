@@ -31,7 +31,7 @@ class PosController extends Controller
      */
     public function expensesList(Request $request)
     {
-        $query = Expense::with(['ingredient', 'creator'])
+        $query = Expense::with(['ingredient'])
             ->orderBy('expense_date', 'desc');
 
         // Filter by date range if provided
@@ -43,7 +43,7 @@ class PosController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $expenses
+            'expenses' => $expenses
         ]);
     }
 
@@ -194,6 +194,21 @@ class PosController extends Controller
                 'errors' => $e->getMessage()
             ], 500);
         }
+    }
+
+    // ==================== INGREDIENTS ====================
+
+    /**
+     * Get ingredients list
+     */
+    public function ingredientsList()
+    {
+        $ingredients = \App\Models\Ingredient::orderBy('name', 'asc')->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $ingredients
+        ]);
     }
 
     // ==================== CATEGORIES ====================

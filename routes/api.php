@@ -23,6 +23,8 @@ Route::group(['middleware' => ['x_check'], 'prefix' => 'v1'], function ()
     Route::get('categories', [Controllers\Api\v1\PosController::class, 'categoriesList']);
     // Items
     Route::get('items', [Controllers\Api\v1\PosController::class, 'itemsList']);
+    // Ingredients
+    Route::get('ingredients', [Controllers\Api\v1\PosController::class, 'ingredientsList']);
 
     Route::post('signin', [Controllers\Api\v1\AuthController::class, 'signin']);
 
@@ -41,7 +43,6 @@ Route::group(['middleware' => ['x_check'], 'prefix' => 'v1'], function ()
             Route::put('expenses/{id}', [Controllers\Api\v1\PosController::class, 'expenseEdit']);
 
             
-
             // Sales
             Route::get('sales', [Controllers\Api\v1\PosController::class, 'salesList']);
             Route::post('sales', [Controllers\Api\v1\PosController::class, 'saleCreate']);
