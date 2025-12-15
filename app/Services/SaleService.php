@@ -141,15 +141,16 @@ class SaleService
         }
 
         foreach ($ingredientUsage as $ingredientId => $requiredQty) {
-            $stock = Stock::where('ingredient_id', $ingredientId)->lockForUpdate()->first();
+            $stock = Stock::with('ingredient')->where('ingredient_id', $ingredientId)->lockForUpdate()->first();
 
             if (!$stock) {
                 throw new Exception("Stock record not found for ingredient ID: {$ingredientId}", 409);
             }
 
             if ($stock->quantity < $requiredQty) {
+                $ingredientName = $stock->ingredient ? $stock->ingredient->name : "ID: {$ingredientId}";
                 throw new Exception(
-                    "Insufficient stock for ingredient ID: {$ingredientId}.  Available: " . number_format($stock->quantity, 0) . ", Required: " . number_format($requiredQty, 0),
+                    "Insufficient stock for {$ingredientName}. Available: " . number_format($stock->quantity, 0) . ", Required: " . number_format($requiredQty, 0),
                     409
                 );
             }
