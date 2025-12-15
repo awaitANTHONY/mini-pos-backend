@@ -149,7 +149,7 @@ class SaleService
 
             if ($stock->quantity < $requiredQty) {
                 throw new Exception(
-                    "Insufficient stock for ingredient ID: {$ingredientId}. Available: " . number_format($stock->quantity, 0) . ", Required: " . number_format($requiredQty, 0),
+                    "Insufficient stock for ingredient ID: {$ingredientId}.  Available: " . number_format($stock->quantity, 0) . ", Required: " . number_format($requiredQty, 0),
                     409
                 );
             }
