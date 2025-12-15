@@ -29,25 +29,6 @@ class SettingController extends Controller
         return view('backend.settings.app');
     }
     
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function prediction_app(Request $request)
-    {
-        return view('backend.settings.prediction_app');
-    }
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function real_app(Request $request)
-    {
-        return view('backend.settings.real_app');
-    }
 
     /**
      * Store a newly created resource in storage.
