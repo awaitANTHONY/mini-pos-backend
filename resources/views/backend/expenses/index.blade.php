@@ -41,7 +41,7 @@
 		serverSide: true,
 		ajax: _url + "/expenses",
 		"columns" : [
-			{ data : "ingredient", name : "ingredient" },
+			{ data : "ingredient_name", name : "ingredient_name" },
         	{ data : "quantity", name : "quantity" },
         	{ data : "unit_price", name : "unit_price" },
         	{ data : "total_amount", name : "total_amount" },
