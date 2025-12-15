@@ -32,7 +32,7 @@ class PosController extends Controller
     public function expensesList(Request $request)
     {
         $query = Expense::with(['ingredient'])
-            ->orderBy('expense_date', 'desc');
+            ->orderBy('id', 'desc');
 
         // Filter by date range if provided
         if ($request->has('start_date') && $request->has('end_date')) {
